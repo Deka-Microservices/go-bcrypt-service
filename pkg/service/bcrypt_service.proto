@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option go_package = "github.com/deka-microservices/go-bcrypt-service/pkg/service";
+
+package bcrypt_service;
+
+message HashRequest { string password = 1; }
+message HashResponse { string hash = 1; }
+
+service BcryptService { rpc HashPassword(HashRequest) returns (HashResponse); }
