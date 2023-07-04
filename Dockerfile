@@ -10,7 +10,7 @@ FROM ubuntu:latest
 WORKDIR /app 
 COPY --from=builder /build/server /app/
 
-EXPOSE 8080
+EXPOSE 9000
 
 CMD [ "/app/server" ]
 
