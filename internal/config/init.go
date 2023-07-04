@@ -17,7 +17,7 @@ func init() {
 	viper.SetEnvPrefix("BCRYPT_SERVICE")
 	viper.AutomaticEnv()
 
-	viper.SetDefault(consts.CONFIG_PORT, 8080)
+	viper.SetDefault(consts.CONFIG_PORT, 9000)
 	viper.SetDefault(consts.CONFIG_IP, "0.0.0.0")
 	viper.SetDefault(consts.CONFIG_COST, 14)
 
