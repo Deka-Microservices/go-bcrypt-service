@@ -7,4 +7,13 @@ package bcrypt_service;
 message HashRequest { string password = 1; }
 message HashResponse { string hash = 1; }
 
-service BcryptService { rpc HashPassword(HashRequest) returns (HashResponse); }
+message CheckRequest {
+  string password = 1;
+  string hash = 2;
+}
+message CheckResponse { bool valid = 1; }
+
+service BcryptService {
+  rpc HashPassword(HashRequest) returns (HashResponse);
+  rpc CheckPassword(CheckRequest) returns (CheckResponse);
+}

@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/deka-microservices/go-bcrypt-service/pkg/service"
@@ -38,4 +39,29 @@ func (server *BcryptRPCServer) HashPassword(ctx context.Context, req *service.Ha
 	}
 
 	return &service.HashResponse{Hash: string(hash)}, nil
+}
+
+func (server *BcryptRPCServer) CheckPassword(ctx context.Context, req *service.CheckRequest) (*service.CheckResponse, error) {
+	password := req.GetPassword()
+	hash := req.GetHash()
+
+	start_time := time.Now()
+
+	defer func() {
+		elapsed := time.Since(start_time)
+		log.Info().Any("elapsed_us", elapsed.Microseconds()).Msg("check performance")
+	}()
+
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	valid := err == nil
+	out := &service.CheckResponse{Valid: valid}
+
+	if !valid {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			return out, nil
+		}
+		return out, err
+	}
+
+	return out, nil
 }

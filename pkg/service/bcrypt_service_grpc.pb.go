@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	BcryptService_HashPassword_FullMethodName = "/bcrypt_service.BcryptService/HashPassword"
+	BcryptService_HashPassword_FullMethodName  = "/bcrypt_service.BcryptService/HashPassword"
+	BcryptService_CheckPassword_FullMethodName = "/bcrypt_service.BcryptService/CheckPassword"
 )
 
 // BcryptServiceClient is the client API for BcryptService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BcryptServiceClient interface {
 	HashPassword(ctx context.Context, in *HashRequest, opts ...grpc.CallOption) (*HashResponse, error)
+	CheckPassword(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*CheckResponse, error)
 }
 
 type bcryptServiceClient struct {
@@ -46,11 +48,21 @@ func (c *bcryptServiceClient) HashPassword(ctx context.Context, in *HashRequest,
 	return out, nil
 }
 
+func (c *bcryptServiceClient) CheckPassword(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*CheckResponse, error) {
+	out := new(CheckResponse)
+	err := c.cc.Invoke(ctx, BcryptService_CheckPassword_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BcryptServiceServer is the server API for BcryptService service.
 // All implementations must embed UnimplementedBcryptServiceServer
 // for forward compatibility
 type BcryptServiceServer interface {
 	HashPassword(context.Context, *HashRequest) (*HashResponse, error)
+	CheckPassword(context.Context, *CheckRequest) (*CheckResponse, error)
 	mustEmbedUnimplementedBcryptServiceServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedBcryptServiceServer struct {
 
 func (UnimplementedBcryptServiceServer) HashPassword(context.Context, *HashRequest) (*HashResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HashPassword not implemented")
+}
+func (UnimplementedBcryptServiceServer) CheckPassword(context.Context, *CheckRequest) (*CheckResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckPassword not implemented")
 }
 func (UnimplementedBcryptServiceServer) mustEmbedUnimplementedBcryptServiceServer() {}
 
@@ -92,6 +107,24 @@ func _BcryptService_HashPassword_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BcryptService_CheckPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BcryptServiceServer).CheckPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BcryptService_CheckPassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BcryptServiceServer).CheckPassword(ctx, req.(*CheckRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BcryptService_ServiceDesc is the grpc.ServiceDesc for BcryptService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +135,10 @@ var BcryptService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HashPassword",
 			Handler:    _BcryptService_HashPassword_Handler,
+		},
+		{
+			MethodName: "CheckPassword",
+			Handler:    _BcryptService_CheckPassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
