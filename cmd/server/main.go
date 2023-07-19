@@ -12,7 +12,11 @@ import (
 	"google.golang.org/grpc"
 )
 
+var Version = "dev"
+
 func main() {
+	log.Info().Str("version", Version).Msg("current version")
+
 	address := viper.GetString(consts.CONFIG_IP) + ":" + viper.GetString(consts.CONFIG_PORT)
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
